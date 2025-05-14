@@ -16,4 +16,4 @@ server->usingNewPacketForServer = true;
 ## Credit
 Special thanks to this awesome person:
 - [ZTzTopia](https://github.com/ZTzTopia)
-- [@RainBolt1](https://tm.me/RainBolt1)
+- [@RainBolt1](https://t.me/RainBolt1)
