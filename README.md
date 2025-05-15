@@ -31,7 +31,7 @@ win32.c
 
 Nah disitu kan ada file Include, sama Lib tuh, itu kalian copy/cut trus kalian paste di folder Enet tadi yang di source kalian
 
-## 3. Kalian bukan Visual Studio / File .sln source kalian, lalu click tombol Projects->lalu click (nama-source) Properties
+## 3. Kalian buka Visual Studio / File .sln source kalian, lalu click tombol Projects->lalu click (nama-source) Properties
 
 ## 4. Lalu kalian ke bagian VC++ Directories
 ![image](https://github.com/user-attachments/assets/8704d039-b2e8-4505-a6df-cca808ee7676)
