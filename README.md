@@ -2,7 +2,8 @@
 How to fix the 'error connection' issue in Growtopia v5.15 (Private Server Only)
 
 This is a library (build version) of [ENet for Growtopia](https://github.com/ZTzTopia/enet/tree/20193ae48ef4bf2e7829105d7f7c9f185e580619).
-FYI: Growtopia recently released a significant update on the client side. In version 5.15, the server must support the new packet system for the client to connect to the ENet server.
+
+FYI: Growtopia recently released a significant update on the client side. In version 5.15, the server must support the new packet system for the client to connect to the ENet server.<br>
 FYI: Growtopia baru aja rilis versi baru yang buat login versi 5.16+ Error
 
 # How to Fix / Cara Fix
