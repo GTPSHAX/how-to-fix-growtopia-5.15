@@ -7,6 +7,7 @@ FYI: Growtopia baru aja rilis versi baru yang buat login versi 5.16+ Error
 
 ## How to Fix / Cara Fix
 1. Bukan Folder Source kalian, kalian cari, folder Enet. trus buka 
+
 ![image](https://github.com/user-attachments/assets/88fc4afe-390c-4e39-9831-0a195d5d9e8f)
 
 Nah disini kan ada folder include tuh, itu hapus aja. trus file c/cpp nya hapus file file ini : 
