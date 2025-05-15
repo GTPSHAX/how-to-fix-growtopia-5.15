@@ -5,8 +5,11 @@ This is a library (build version) of [ENet for Growtopia](https://github.com/ZTz
 FYI: Growtopia recently released a significant update on the client side. In version 5.15, the server must support the new packet system for the client to connect to the ENet server.
 FYI: Growtopia baru aja rilis versi baru yang buat login versi 5.16+ Error
 
-## How to Fix / Cara Fix
-## 1. Bukan Folder Source kalian, kalian cari, folder Enet. trus buka 
+# How to Fix / Cara Fix
+
+
+## 1. Buka Folder Source kalian, kalian cari, folder Enet. trus buka 
+
 
 ![image](https://github.com/user-attachments/assets/88fc4afe-390c-4e39-9831-0a195d5d9e8f)
 
@@ -21,15 +24,15 @@ protocol.c
 win32.c
 ```
 
-## 2.Download repo ini trus extract
+## 2. Download repo ini trus extract
 
 ![image](https://github.com/user-attachments/assets/15b371aa-26f4-4730-abd4-26acc3743174)
 
 Nah disitu kan ada file Include, sama Lib tuh, itu kalian copy/cut trus kalian paste di folder Enet tadi yang di source kalian
 
-## 3.Kalian bukan Visual Studio / File .sln source kalian, lalu click tombol Projects->lalu click (nama-source) Properties
+## 3. Kalian bukan Visual Studio / File .sln source kalian, lalu click tombol Projects->lalu click (nama-source) Properties
 
-## 4.Lalu kalian ke bagian VC++ Directories
+## 4. Lalu kalian ke bagian VC++ Directories
 ![image](https://github.com/user-attachments/assets/8704d039-b2e8-4505-a6df-cca808ee7676)
 
 Trus kalian ke **External Include Directories** kalian Edit->New Line, trus tambahin Path Ke Folder include tadi, jadi contoh : 
@@ -40,7 +43,7 @@ Sekarang kalian ke bagian **Library Directores** click Edit->New Line, trus tamb
 D:\GTPS\InfinityPS\enet\lib
 click Okay, trus click **Apply**
 
-## 5.Sekarang ke bagian **Linker->Input**
+## 5. Sekarang ke bagian **Linker->Input**
 ![image](https://github.com/user-attachments/assets/5631bf46-06c6-4067-9d61-fc9bd77b62d7)
 
 Trus ke bagian **Additional Dependencies**, lalu kalian click Edit, lalu **PALING ATAS** penting ini cuy harus paling atas, soalnya tadi gw tes paling bawah Error, kalian Tambahin
