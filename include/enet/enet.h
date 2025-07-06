@@ -32,6 +32,13 @@ extern "C"
 #define ENET_VERSION_GET_PATCH(version) ((version)&0xFF)
 #define ENET_VERSION ENET_VERSION_CREATE(ENET_VERSION_MAJOR, ENET_VERSION_MINOR, ENET_VERSION_PATCH)
 
+#ifdef ENET_DEBUG
+    #define DBG_PRINT(fmt, ...) \
+        printf("[%s:%d:%s()] " fmt "\n", __FILE__, __LINE__, __func__, ##__VA_ARGS__)
+#else
+    #define DBG_PRINT(fmt, ...) do {} while (0)
+#endif
+
 typedef enet_uint32 ENetVersion;
 
 struct _ENetHost;

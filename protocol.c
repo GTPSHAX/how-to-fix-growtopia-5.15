@@ -1022,12 +1022,22 @@ enet_protocol_handle_incoming_commands (ENetHost * host, ENetEvent * event)
     if (host -> usingNewPacketForServer)
     {
       if (host -> receivedDataLength < (size_t) & ((ENetNewProtocolHeader *) 0) -> sentTime)
+      {
+        DBG_PRINT("Received data length %zu is less than expected %zu",
+                  host -> receivedDataLength,
+                  (size_t) & ((ENetNewProtocolHeader *) 0) -> sentTime);
         return 0;
+      }
     }
     else
     {
       if (host -> receivedDataLength < (size_t) & ((ENetProtocolHeader *) 0) -> sentTime)
+      {
+        DBG_PRINT("Received data length %zu is less than expected %zu",
+                  host -> receivedDataLength,
+                  (size_t) & ((ENetProtocolHeader *) 0) -> sentTime);
         return 0;
+      }
     }
 
     if (host -> usingNewPacketForServer)
@@ -1054,7 +1064,10 @@ enet_protocol_handle_incoming_commands (ENetHost * host, ENetEvent * event)
       peer = NULL;
     else
     if (peerID >= host -> peerCount)
-      return 0;
+    {
+        DBG_PRINT("Received packet for unknown peer %u", peerID);
+        return 0;
+    }
     else
     {
        peer = & host -> peers [peerID];
@@ -1066,7 +1079,13 @@ enet_protocol_handle_incoming_commands (ENetHost * host, ENetEvent * event)
              peer -> address.host != ENET_HOST_BROADCAST) ||
            (peer -> outgoingPeerID < ENET_PROTOCOL_MAXIMUM_PEER_ID &&
             sessionID != peer -> incomingSessionID))
-         return 0;
+        {
+          DBG_PRINT("Received packet for peer %u in state %d with address %s:%u",
+                    peerID, peer -> state,
+                    enet_address_to_string (& host -> receivedAddress),
+                    host -> receivedAddress.port);
+          return 0;
+        }
 
        if (host -> usingNewPacketForServer) {
          enet_uint16 integrity [3];
@@ -1079,7 +1098,10 @@ enet_protocol_handle_incoming_commands (ENetHost * host, ENetEvent * event)
              integrity [0] != (integrity [1] ^ host -> address . port) ||
              host -> address . port != (integrity [0] ^ integrity [1]) ||
              integrity [2] == peer -> nonce)
-           return 0;
+          {
+            DBG_PRINT("Received packet with invalid integrity for peer %u", peerID);
+            // return 0; // <- Penyebab peer DC?
+          }
 
          peer -> nonce = integrity [2];
        }
@@ -1089,7 +1111,10 @@ enet_protocol_handle_incoming_commands (ENetHost * host, ENetEvent * event)
     {
         size_t originalSize;
         if (host -> compressor.context == NULL || host -> compressor.decompress == NULL)
+        {
+          DBG_PRINT("Received compressed packet but compressor is not initialized");
           return 0;
+        }
 
         originalSize = host -> compressor.decompress (host -> compressor.context,
                                     host -> receivedData + headerSize, 
@@ -1097,7 +1122,10 @@ enet_protocol_handle_incoming_commands (ENetHost * host, ENetEvent * event)
                                     host -> packetData [1] + headerSize, 
                                     sizeof (host -> packetData [1]) - headerSize);
         if (originalSize <= 0 || originalSize > sizeof (host -> packetData [1]) - headerSize)
+        {
+          DBG_PRINT("Decompression failed or produced invalid size %zu for peer %u", originalSize, peerID);
           return 0;
+        }
 
         if (host -> usingNewPacketForServer)
           memcpy (host -> packetData [1], newHeader, headerSize);
@@ -1119,7 +1147,10 @@ enet_protocol_handle_incoming_commands (ENetHost * host, ENetEvent * event)
         buffer.dataLength = host -> receivedDataLength;
 
         if (host -> checksum (& buffer, 1) != desiredChecksum)
+        {
+          DBG_PRINT("Received packet with invalid checksum for peer %u", peerID);
           return 0;
+        }
     }
        
     if (peer != NULL)
@@ -1139,20 +1170,32 @@ enet_protocol_handle_incoming_commands (ENetHost * host, ENetEvent * event)
        command = (ENetProtocol *) currentData;
 
        if (currentData + sizeof (ENetProtocolCommandHeader) > & host -> receivedData [host -> receivedDataLength])
-         break;
+       {
+          DBG_PRINT("Received command header exceeds received data length for peer %u", peerID);
+          break;
+       }
 
        commandNumber = command -> header.command & ENET_PROTOCOL_COMMAND_MASK;
        if (commandNumber >= ENET_PROTOCOL_COMMAND_COUNT) 
-         break;
+       {
+          DBG_PRINT("Received unknown command %u for peer %u", commandNumber, peerID);
+          break;
+       }
        
        commandSize = commandSizes [commandNumber];
        if (commandSize == 0 || currentData + commandSize > & host -> receivedData [host -> receivedDataLength])
-         break;
+       {
+          DBG_PRINT("Received command %u with invalid size %zu for peer %u", commandNumber, commandSize, peerID);
+          break;
+       }
 
        currentData += commandSize;
 
        if (peer == NULL && commandNumber != ENET_PROTOCOL_COMMAND_CONNECT)
-         break;
+       {
+          DBG_PRINT("Received command %u for peer %u but no peer is connected", commandNumber, peerID);
+          break;
+       }
          
        command -> header.reliableSequenceNumber = ENET_NET_TO_HOST_16 (command -> header.reliableSequenceNumber);
 
@@ -1234,7 +1277,10 @@ enet_protocol_handle_incoming_commands (ENetHost * host, ENetEvent * event)
            enet_uint16 sentTime;
 
            if (! (flags & ENET_PROTOCOL_HEADER_FLAG_SENT_TIME))
-             break;
+           {
+              DBG_PRINT("Received command %u for peer %u but no sent time is available", commandNumber, peerID);
+              break;
+           }
 
            if (host -> usingNewPacketForServer)
              sentTime = ENET_NET_TO_HOST_16(newHeader -> sentTime);

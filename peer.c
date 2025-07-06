@@ -113,7 +113,11 @@ enet_peer_send (ENetPeer * peer, enet_uint8 channelID, ENetPacket * packet)
    if (peer -> state != ENET_PEER_STATE_CONNECTED ||
        channelID >= peer -> channelCount ||
        packet -> dataLength > peer -> host -> maximumPacketSize)
-     return -1;
+  {
+    DBG_PRINT("Potentional error: Peer state %d, channelID %d, packet data length %zu, maximum packet size %zu",
+              peer -> state, channelID, packet -> dataLength, peer -> host -> maximumPacketSize);
+    return -1;
+  }
 
    channel = & peer -> channels [channelID];
    if (peer -> host -> usingNewPacket)
@@ -134,7 +138,10 @@ enet_peer_send (ENetPeer * peer, enet_uint8 channelID, ENetPacket * packet)
       ENetOutgoingCommand * fragment;
 
       if (fragmentCount > ENET_PROTOCOL_MAXIMUM_FRAGMENT_COUNT)
+      {
+        DBG_PRINT("Fragment count %u exceeds maximum %d", fragmentCount, ENET_PROTOCOL_MAXIMUM_FRAGMENT_COUNT);
         return -1;
+      }
 
       if ((packet -> flags & (ENET_PACKET_FLAG_RELIABLE | ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT)) == ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT &&
           channel -> outgoingUnreliableSequenceNumber < 0xFFFF)
@@ -169,6 +176,7 @@ enet_peer_send (ENetPeer * peer, enet_uint8 channelID, ENetPacket * packet)
                enet_free (fragment);
             }
             
+            DBG_PRINT("Failed to allocate memory for outgoing command fragment");
             return -1;
          }
          
@@ -219,7 +227,10 @@ enet_peer_send (ENetPeer * peer, enet_uint8 channelID, ENetPacket * packet)
    }
 
    if (enet_peer_queue_outgoing_command (peer, & command, packet, 0, packet -> dataLength) == NULL)
-     return -1;
+   {
+      DBG_PRINT("Failed to queue outgoing command for peer");
+      return -1;
+   }
 
    return 0;
 }
