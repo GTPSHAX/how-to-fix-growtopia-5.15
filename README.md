@@ -34,38 +34,47 @@ Instead of manually copying files, we'll build the ENet library using CMake.
 - Build with CMake (Command Line)
   - Open your command prompt or terminal.
   - Navigate to your enet directory:
-     cd path/to/your/server/source/enet
+    ```bash
+    cd path/to/your/server/source/enet
+    ```
 
   - Create a build directory and navigate into it:
-     mkdir build
-cd build
+    ```bash
+    mkdir build && cd build
+    ```
 
   - Run CMake to generate project files. For Visual Studio, you might use:
-     cmake .. -G "Visual Studio 17 2022" # Adjust "Visual Studio 17 2022" to your VS version
+    ```bash
+    cmake .. -G "Visual Studio 17 2022" # Adjust "Visual Studio 17 2022" to your VS version
+    ```
 
     - Tip: To see available generators, run cmake --help.
   - Build the ENet project:
-     cmake --build . --config Release # Or Debug, depending on your needs
+    ```bash
+    cmake --build . --config Release # Or Debug, depending on your needs
+    ```
 
-     This command will compile ENet and generate enet.lib (and potentially enet.dll if configured for shared library) in the Release or Debug subfolder within your build directory.
+    This command will compile ENet and generate enet.lib (and potentially enet.dll if configured for shared library) in the Release or Debug subfolder within your build directory.
 - Configure Your Project in Visual Studio
   - Open your .sln file in Visual Studio.
   - Go to Project > Properties.
   - VC++ Directories:
-    - Add the path to the newly built include folder (it's usually path/to/your/server/source/enet/include) under Include Directories.
-    - Add the path to the newly built lib folder (e.g., path/to/your/server/source/enet/build/Release or path/to/your/server/source/enet/build/Debug) under Library Directories.
+    - Add the path to the newly built include folder (it's usually `path/to/your/server/source/enet/include`) under Include Directories.
+    - Add the path to the newly built lib folder (e.g., `path/to/your/server/source/enet/build/Release` or `path/to/your/server/source/enet/build/Debug`) under Library Directories.
   - Linker > Input:
-    - Add enet.lib to the top of the Additional Dependencies list.
+    - Add **enet.lib** to the top of the Additional Dependencies list.
 
 ## Configuration
 
 - Enable the New Packet System
   - In your server source code, search for:
-    > server->checksum = enet_crc32;
+    ```cpp
+    server->checksum = enet_crc32;
+    ```
 
     Add the following line above it:
     ```cpp
-    > server->usingNewPacketForServer = 1; // Enables new packet system for Growtopia 5.15+
+    server->usingNewPacketForServer = 1; // Enables new packet system for Growtopia 5.15+
     ```
 
 - Update server_data.php
