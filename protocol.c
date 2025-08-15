@@ -1072,8 +1072,25 @@ enet_protocol_handle_incoming_commands (ENetHost * host, ENetEvent * event)
         {
           return 0;
         }
+
+        if (host -> usingNewPacketForServer && event->peer != NULL && event->peer->state != ENET_PEER_STATE_CONNECTED) {
+         enet_uint16 integrity [3];
+         integrity [0] = ENET_NET_TO_HOST_16 (newHeader -> integrity [0]);
+         integrity [1] = ENET_NET_TO_HOST_16 (newHeader -> integrity [1]);
+         integrity [2] = ENET_NET_TO_HOST_16 (newHeader -> integrity [2]);
+
+         if ((integrity [0] < 0 ||
+              integrity [0] > host -> address . port) ||
+             integrity [0] != (integrity [1] ^ host -> address . port) ||
+             host -> address . port != (integrity [0] ^ integrity [1]) ||
+             integrity [2] == peer -> nonce)
+          {
+            return 0; // <- Penyebab peer DC?
+          }
+
+         peer -> nonce = integrity [2];
+        }
     }
- 
     if (flags & ENET_PROTOCOL_HEADER_FLAG_COMPRESSED)
     {
         size_t originalSize;
